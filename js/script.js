@@ -13,6 +13,12 @@ const sort = 'updated';
 // defines per page
 const perPage = 100;
 
+// selects repo section where repo info appears
+const repoSection = document.querySelector('.repos');
+ 
+// selects section where individual repo data appears
+const repoDataSection = document.querySelector('.repo-data');
+
 // fetches github API JSON Data
 const getData = async function (){
     const res = await fetch (`https://api.github.com/users/${username}`);
@@ -47,7 +53,7 @@ const getRepoData = async function (){
     console.log(dataRepo);
     repoInfo (dataRepo);
 };
-// getRepoData();
+getRepoData();
 
 // displays Repo Info
 const repoInfo = function (repos) {
@@ -56,5 +62,30 @@ const repoInfo = function (repos) {
         repoItem.classList.add("repo");
         repoItem.innerHTML = `<h3>${repo.name}</h3>`;
         repoList.append(repoItem);
+    }
+}
+
+// click event listener
+repoList.addEventListener('click', function (e) {
+    if (e.target.matches("h3")) {
+        const repoName = e.target.innerText;
+        console.log(repoName);
+        getRepoItem(repoName);
+    }
+});
+
+const getRepoItem = async function (repoName) {
+    const fetchRepoInfo = await fetch (`https://api.github.com/repos/${username}/${repoName}`);
+    const repoInfo = await fetchRepoInfo.json();
+    console.log(repoInfo);
+    // array of languages
+    const fetchLanguages = await fetch (repoInfo.languages_url)
+    const languageData = await fetchLanguages.json();
+    console.log(languageData);
+    let languages = [];
+    for (const language in languageData) {
+        languages.push(language);
+        // console.log(languages);
+
     }
 }
